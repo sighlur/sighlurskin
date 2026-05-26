@@ -6,7 +6,7 @@
 // The publishable key is safe to ship to the browser — RLS protects the table.
 const SUPABASE_URL = 'https://nbhzcxznbredybhgftdf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_E-SX57dvqy6TndFNnkSM1w_DR2WqKln';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Smooth-scroll anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -49,7 +49,7 @@ if (form) {
     submitBtn.textContent = 'Reserving…';
     showStatus('Sending…');
 
-    const { error } = await supabase
+    const { error } = await sb
       .from('signups')
       .insert({ email, source: 'site_preorder' });
 
