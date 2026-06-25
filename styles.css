@@ -477,8 +477,8 @@ a:hover { opacity: 0.75; }
    Founder
    ────────────────────────────────────────────────────────────── */
 .founder {
-  background: var(--sky);
-  padding: 120px 32px;
+  background: var(--bg);
+  padding: 80px 32px 110px;
 }
 .founder-inner {
   max-width: var(--container);
