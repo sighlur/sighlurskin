@@ -506,6 +506,14 @@ a:hover { opacity: 0.75; }
   justify-content: center;
   color: rgba(20, 56, 160, 0.4);
 }
+.founder-photo-img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 25%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
 .founder-photo-badge {
   position: absolute;
   bottom: 20px;
