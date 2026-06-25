@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="The Sighlur Skin Steps — five steps, that's the whole routine. A simple, clear skin routine from a Dermatology PA-C, with a ranked pyramid video for every step." />
+<meta property="og:title" content="The Sighlur Skin Steps — five steps, that's the whole routine." />
+<meta property="og:description" content="A simple, clear skin routine from a Dermatology PA-C. One ranked pyramid video per step." />
+<meta name="theme-color" content="#1438A0" />
+<title>The Sighlur Skin Steps — sighlurskin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --powder:#E7F1FB; --sky:#B9D8F2; --azure:#6DA8E2; --marine:#2E62C4;
+    --cobalt:#1438A0; --deep:#0A1F5C; --bone:#F4EEDF; --cream:#FBF6EA;
+    --butter:#F7D45A; --ink:#101730; --bg:#EFE9DA;
+    --radius-sm:12px; --radius:20px; --radius-lg:32px;
+    --shadow:0 20px 60px -20px rgba(10,31,92,0.18);
+    --display:'Bagel Fat One', system-ui, sans-serif;
+    --body:'Plus Jakarta Sans', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--body); -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .mono { font-family:var(--mono); text-transform:uppercase; letter-spacing:0.14em; }
+
+  /* announcement marquee */
+  .announcement { background:var(--cobalt); color:var(--bone); overflow:hidden; }
+  .marquee { white-space:nowrap; padding:9px 0; }
+  .marquee span { font-family:var(--mono); font-size:12px; letter-spacing:0.16em; text-transform:uppercase; }
+  .marquee .dot { margin:0 16px; color:var(--butter); }
+
+  /* nav */
+  .nav { display:flex; align-items:center; justify-content:space-between;
+         max-width:1180px; margin:0 auto; padding:22px 28px; }
+  .lockup { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .droplet { display:grid; place-items:center; width:40px; height:40px; background:var(--cobalt);
+             color:var(--bone); font-family:var(--display); font-size:22px;
+             border-radius:50% 50% 50% 14%; }
+  .wordmark { font-family:var(--display); font-size:24px; color:var(--cobalt); }
+  .wordmark .b { opacity:.55; }
+  .nav-links { display:flex; gap:24px; font-weight:500; }
+  .nav-links a { text-decoration:none; color:var(--ink); opacity:.8; }
+  .nav-links a:hover { opacity:1; color:var(--cobalt); }
+  .btn { display:inline-block; font-family:var(--body); font-weight:600; font-size:15px;
+         padding:12px 24px; border-radius:999px; text-decoration:none; cursor:pointer;
+         transition:transform .15s ease, box-shadow .15s ease, background .15s ease; border:none; }
+  .btn-primary { background:var(--cobalt); color:var(--bone); }
+  .btn-primary:hover { background:var(--deep); transform:translateY(-1px); box-shadow:var(--shadow); }
+  .btn-butter { background:var(--butter); color:var(--deep); }
+  .btn-butter:hover { background:#FFE07A; transform:translateY(-1px); box-shadow:var(--shadow); }
+  .btn-ghost { background:transparent; color:var(--cobalt); border:2px solid var(--cobalt); }
+  .btn-ghost:hover { background:var(--cobalt); color:var(--bone); }
+  .btn-lg { font-size:16px; padding:15px 30px; }
+
+  /* hero */
+  .hero { max-width:1180px; margin:0 auto; padding:52px 28px 24px; }
+  .hero-grid { display:grid; grid-template-columns:1.08fr 0.92fr; gap:44px; align-items:center; }
+  .hero-copy { text-align:left; }
+  .eyebrow { font-family:var(--mono); text-transform:uppercase; letter-spacing:0.2em;
+             font-size:13px; color:var(--cobalt); }
+  .hero h1 { font-family:var(--display); color:var(--cobalt); letter-spacing:-0.01em;
+             line-height:1.02; margin:18px 0 0; font-size:clamp(44px, 6.4vw, 84px); }
+  .uline { position:relative; display:inline-block; z-index:0; }
+  .uline::after { content:""; position:absolute; left:-2%; right:-2%; bottom:6%; height:22%;
+                  background:var(--butter); border-radius:4px; transform:skew(-3deg); z-index:-1; }
+  .hero .lede { max-width:520px; margin:22px 0 0; font-size:19px; line-height:1.6; color:rgba(16,23,48,.8); }
+  .hero-cta { margin-top:30px; display:flex; gap:14px; justify-content:flex-start; flex-wrap:wrap; }
+  .hero-art { display:grid; place-items:center; }
+  .hero-art img { width:100%; max-width:460px; filter:drop-shadow(0 30px 50px rgba(10,31,92,0.22)); }
+
+  /* count strip */
+  .count { display:flex; gap:10px; justify-content:flex-start; align-items:center; margin-top:34px; flex-wrap:wrap; }
+  .count .pip { width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
+                font-family:var(--display); font-size:17px; color:var(--bone); background:var(--cobalt); }
+  .count .lbl { font-family:var(--mono); text-transform:uppercase; letter-spacing:0.16em;
+                font-size:12px; color:var(--deep); }
+
+  /* steps */
+  .steps { max-width:980px; margin:0 auto; padding:40px 28px 20px; display:flex; flex-direction:column; gap:22px; }
+  .step { background:var(--cream); border-radius:var(--radius-lg); box-shadow:var(--shadow);
+          display:grid; grid-template-columns:128px 1fr auto; align-items:center; gap:26px;
+          padding:26px 30px; }
+  .step-icon { width:118px; height:118px; border-radius:var(--radius); background:var(--bg);
+               display:grid; place-items:center; overflow:hidden; }
+  .step-icon img { width:100%; height:100%; object-fit:contain; }
+  .step-body .kicker { font-family:var(--mono); text-transform:uppercase; letter-spacing:0.16em;
+                       font-size:12px; color:var(--deep); }
+  .step-body h2 { font-family:var(--display); color:var(--cobalt); font-size:34px; line-height:1;
+                  margin:6px 0 8px; letter-spacing:-0.01em; }
+  .step-body p { font-size:17px; color:rgba(16,23,48,.78); max-width:430px; }
+  .step-cta { display:flex; flex-direction:column; align-items:flex-end; gap:8px; min-width:150px; }
+  .status { font-family:var(--mono); text-transform:uppercase; letter-spacing:0.14em; font-size:11px;
+            padding:5px 12px; border-radius:999px; }
+  .status.live { background:var(--cobalt); color:var(--bone); }
+  .status.soon { border:1.5px solid var(--cobalt); color:var(--cobalt); }
+  .watch { font-family:var(--body); font-weight:600; font-size:15px; padding:11px 20px; border-radius:999px;
+           text-decoration:none; background:var(--butter); color:var(--deep); white-space:nowrap; }
+  .watch:hover { background:#FFE07A; }
+  .watch.disabled { background:transparent; color:rgba(16,23,48,.4); border:1.5px solid rgba(16,23,48,.18);
+                    pointer-events:none; }
+
+  /* poster + funnel */
+  .funnel { max-width:980px; margin:30px auto 0; padding:0 28px 70px; display:grid;
+            grid-template-columns:1fr 1fr; gap:24px; }
+  .poster-card, .product-card { border-radius:var(--radius-lg); box-shadow:var(--shadow); overflow:hidden; }
+  .poster-card { background:var(--cream); display:grid; place-items:center; padding:20px; }
+  .poster-card img { width:100%; border-radius:var(--radius); }
+  .product-card { background:var(--cobalt); color:var(--bone); padding:38px; display:flex;
+                  flex-direction:column; justify-content:center; }
+  .product-card .eyebrow { color:var(--butter); }
+  .product-card h3 { font-family:var(--display); font-size:34px; line-height:1.05; margin:14px 0 12px; }
+  .product-card p { color:rgba(244,238,223,.85); font-size:17px; line-height:1.6; margin-bottom:24px; }
+  .product-card .btn-butter { align-self:flex-start; }
+
+  footer { background:var(--deep); color:var(--bone); text-align:center; padding:30px 20px; }
+  footer .mono { font-size:11px; opacity:.75; }
+
+  @media (max-width:760px) {
+    .nav-links { display:none; }
+    .hero-grid { grid-template-columns:1fr; gap:24px; }
+    .hero-copy { text-align:center; }
+    .hero .lede { margin-left:auto; margin-right:auto; }
+    .hero-cta, .count { justify-content:center; }
+    .hero-art { order:-1; }
+    .hero-art img { max-width:300px; }
+    .step { grid-template-columns:78px 1fr; row-gap:16px; }
+    .step-icon { width:72px; height:72px; }
+    .step-cta { grid-column:1 / -1; flex-direction:row; align-items:center; justify-content:space-between; }
+    .funnel { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="announcement">
+  <div class="marquee">
+    <span>THE SIGHLUR SKIN STEPS</span><span class="dot">●</span>
+    <span>FIVE STEPS. THAT'S THE WHOLE ROUTINE.</span><span class="dot">●</span>
+    <span>ONE RANKED PYRAMID PER STEP</span><span class="dot">●</span>
+    <span>FROM A DERMATOLOGY PA-C</span><span class="dot">●</span>
+  </div>
+</div>
+
+<header class="nav">
+  <a href="index.html" class="lockup" aria-label="sighlurskin home">
+    <span class="droplet" aria-hidden="true">@</span>
+    <span class="wordmark">sighlur<span class="b">skin</span></span>
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="index.html#product">Shop</a>
+    <a href="index.html#founder">About</a>
+    <a href="steps.html">The Skin Steps</a>
+    <a href="index.html#ingredients">Ingredients</a>
+  </nav>
+  <a href="index.html#preorder" class="btn btn-primary">Pre-order →</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">From a Dermatology PA-C · @sighlurskin</span>
+      <h1>The Sighlur<br/>Skin <span class="uline">Steps</span></h1>
+      <p class="lede">Five steps. That's the whole routine. Each one has a ranked
+        pyramid video so you know exactly what's worth it — and what's a waste.</p>
+      <div class="hero-cta">
+        <a href="#step-1" class="btn btn-primary btn-lg">Start with Step 1</a>
+        <a href="index.html#preorder" class="btn btn-ghost btn-lg">Get the wash →</a>
+      </div>
+      <div class="count" aria-label="Five steps">
+        <span class="pip">1</span><span class="pip">2</span><span class="pip">3</span>
+        <span class="pip">4</span><span class="pip">5</span>
+        <span class="lbl">&nbsp;Five steps · two pyramids live</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <img src="pyramid.png" alt="The Sighlur Skin Steps pyramid — five ranked tiers" />
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<!--
+  To embed a video: replace the data-yt placeholder with the YouTube ID and the
+  "Watch the pyramid" link's href with https://youtu.be/THAT_ID . When all five
+  are live, flip every status pill to "live".
+-->
+<section class="steps">
+
+  <article class="step" id="step-1">
+    <div class="step-icon"><img src="skinsteps/01_cleanse.png" alt="Cleanse step icon" /></div>
+    <div class="step-body">
+      <div class="kicker">Step 01 · Cleanser</div>
+      <h2>Cleanse</h2>
+      <p>Start with a clean slate. The face wash that kicks off the whole routine.</p>
+    </div>
+    <div class="step-cta">
+      <span class="status live">▶ Pyramid live</span>
+      <a class="watch" href="https://youtu.be/REPLACE_CLEANSE_ID" data-yt="REPLACE_CLEANSE_ID">Watch the pyramid</a>
+    </div>
+  </article>
+
+  <article class="step" id="step-2">
+    <div class="step-icon"><img src="skinsteps/02_treat.png" alt="Treat step icon" /></div>
+    <div class="step-body">
+      <div class="kicker">Step 02 · Treatment</div>
+      <h2>Treat</h2>
+      <p>Target your concern with actives — the right one, at the right strength.</p>
+    </div>
+    <div class="step-cta">
+      <span class="status soon">Pyramid coming</span>
+      <a class="watch disabled" href="#" data-yt="">Coming soon</a>
+    </div>
+  </article>
+
+  <article class="step" id="step-3">
+    <div class="step-icon"><img src="skinsteps/03_moisturize.png" alt="Moisturize step icon" /></div>
+    <div class="step-body">
+      <div class="kicker">Step 03 · Moisturizer</div>
+      <h2>Moisturize</h2>
+      <p>Hydrate and replenish the barrier so everything else can do its job.</p>
+    </div>
+    <div class="step-cta">
+      <span class="status live">▶ Pyramid live</span>
+      <a class="watch" href="https://youtu.be/REPLACE_MOISTURIZE_ID" data-yt="REPLACE_MOISTURIZE_ID">Watch the pyramid</a>
+    </div>
+  </article>
+
+  <article class="step" id="step-4">
+    <div class="step-icon"><img src="skinsteps/04_occlude.png" alt="Occlude step icon" /></div>
+    <div class="step-body">
+      <div class="kicker">Step 04 · Occlusive</div>
+      <h2>Occlude</h2>
+      <p>Seal everything in overnight. The step almost everyone skips.</p>
+    </div>
+    <div class="step-cta">
+      <span class="status soon">Pyramid coming</span>
+      <a class="watch disabled" href="#" data-yt="">Coming soon</a>
+    </div>
+  </article>
+
+  <article class="step" id="step-5">
+    <div class="step-icon"><img src="skinsteps/05_protect.png" alt="Protect step icon" /></div>
+    <div class="step-body">
+      <div class="kicker">Step 05 · SPF · AM</div>
+      <h2>Protect</h2>
+      <p>Sunscreen, every single morning. The one step that does the most.</p>
+    </div>
+    <div class="step-cta">
+      <span class="status soon">Pyramid coming</span>
+      <a class="watch disabled" href="#" data-yt="">Coming soon</a>
+    </div>
+  </article>
+
+</section>
+
+<!-- POSTER + FUNNEL -->
+<section class="funnel">
+  <div class="poster-card">
+    <img src="skinsteps/skin_steps_poster.png" alt="The Sighlur Skin Steps poster — all five steps" />
+  </div>
+  <div class="product-card">
+    <span class="eyebrow">Step 01, sorted</span>
+    <h3>The wash that starts the steps.</h3>
+    <p>One bottle. The gentle daily cleanser a Dermatology PA-C has been
+      recommending for years — your Step 1, done. Launching July 2026.</p>
+    <a href="index.html#preorder" class="btn btn-butter btn-lg">Pre-order — $28</a>
+  </div>
+</section>
+
+<footer>
+  <p class="mono">© 2026 SIGHLURSKIN, LLC · THE SIGHLUR SKIN STEPS™ · FIVE STEPS, THAT'S THE WHOLE ROUTINE</p>
+</footer>
+
+</body>
+</html>
