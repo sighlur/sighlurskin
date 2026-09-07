@@ -5,8 +5,10 @@
    password is entered. Self-contained (injects its own styles), so
    it works the same on every page regardless of that page's CSS.
 
-   This version does NOT remember you — it prompts on every page load
-   / refresh.
+   Once you enter the password correctly, this remembers you for
+   REMEMBER_DAYS on that browser — so moving between pages (or coming
+   back tomorrow) does not prompt again. To make it forget, run
+   __gateReset() in the browser console.
 
    NOTE: this is a CLIENT-SIDE gate. It keeps casual visitors out, but
    it is NOT cryptographically secure — the page HTML is still sent to
@@ -15,6 +17,67 @@
    ────────────────────────────────────────────────────────────── */
 (function () {
   var PASSWORD = 'Heidi';
+  var REMEMBER_DAYS = 30;
+  var KEY = '__sighlurGate';
+  var MAX_AGE = REMEMBER_DAYS * 24 * 60 * 60 * 1000;
+
+  /* Short fingerprint of the current password. This is NOT security —
+     the password sits in this file either way. It does two useful things:
+     the plaintext never gets written to the visitor's disk, and changing
+     PASSWORD above automatically re-prompts everyone previously let in. */
+  function stamp(s) {
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) {
+      h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    }
+    return String(h >>> 0);
+  }
+
+  /* Some privacy settings (blocked cookies, certain private-window modes)
+     make localStorage throw on access or write. Probe it once; if it's not
+     usable we simply fall back to prompting on every load. */
+  var store = null;
+  try {
+    store = window.localStorage;
+    store.setItem(KEY + ':probe', '1');
+    store.removeItem(KEY + ':probe');
+  } catch (e) {
+    store = null;
+  }
+
+  function isUnlocked() {
+    if (!store) return false;
+    try {
+      var raw = store.getItem(KEY);
+      if (!raw) return false;
+      var saved = JSON.parse(raw);
+      if (!saved || saved.p !== stamp(PASSWORD)) return false; // password changed
+      if (Date.now() - saved.t > MAX_AGE) {                    // grant expired
+        store.removeItem(KEY);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function remember() {
+    if (!store) return;
+    try {
+      store.setItem(KEY, JSON.stringify({ p: stamp(PASSWORD), t: Date.now() }));
+    } catch (e) {}
+  }
+
+  // Escape hatch for testing: re-lock this browser from the console.
+  window.__gateReset = function () {
+    try { if (store) store.removeItem(KEY); } catch (e) {}
+    location.reload();
+  };
+
+  // Already let in — leave the page completely alone. Bailing out before
+  // the hide-style below is what avoids any flash of hidden content.
+  if (isUnlocked()) return;
 
   // Hide the real page content immediately (before it paints), exempting
   // our overlay. Runs from <head>, so content is hidden as it parses —
@@ -69,6 +132,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value === PASSWORD) {
+        remember();
         var h = document.getElementById('__gateHide');
         if (h) h.parentNode.removeChild(h);
         g.parentNode.removeChild(g);
