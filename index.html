@@ -3,233 +3,46 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="sighlurskin — skincare that actually shows up, from a Dermatology PA-C. The Sighlur Skin Steps, ranked pyramid videos, and the real talk across TikTok, Instagram & YouTube." />
-<meta property="og:title" content="sighlurskin — skincare from @sighlurskin, a Dermatology PA-C" />
-<meta property="og:description" content="The Sighlur Skin Steps, ranked pyramid videos, and what actually works — on TikTok, Instagram & YouTube." />
-<meta name="theme-color" content="#1438A0" />
-<title>sighlurskin — skincare that actually shows up</title>
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="favicon.png" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<title>sighlurskin — for all your skincare needs</title>
+<meta name="description" content="sighlurskin, from a Dermatology PA-C. For all your skincare needs. Join the list." />
+<meta property="og:title" content="sighlurskin — for all your skincare needs" />
+<meta property="og:description" content="From a Dermatology PA-C. Join the list." />
+<meta name="theme-color" content="#0F2FE6" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2" />
+<link rel="icon" type="image/png" sizes="512x512" href="favicon.png?v=2" />
+<link rel="apple-touch-icon" href="favicon.png?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
-<script src="gate.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=23" />
 </head>
 <body>
 
-
-<!-- Nav -->
-<header class="nav">
-  <a href="index.html" class="lockup" aria-label="sighlurskin home">
-    <span class="droplet" aria-hidden="true">@</span>
-    <span class="wordmark"><span class="word-blue">sighlur</span><span class="word-bone">skin</span></span>
-  </a>
-  <nav class="nav-links" aria-label="Primary">
-    <a href="steps.html">Skin Steps</a>
-    <a href="#watch">Watch</a>
-    <a href="#follow">Follow</a>
-    <a href="#posts">Posts</a>
-    <a href="shop.html">Shop</a>
-  </nav>
-  <a href="shop.html#preorder" class="btn btn-primary">Pre-order →</a>
+<header class="top">
+  <span class="lockup" aria-label="sighlurskin">
+    <span class="wordmark">sighlur<span>skin</span></span>
+  </span>
 </header>
 
-<!-- Intro · meet the PA (opening section) -->
-<section class="founder" id="about">
-  <div class="founder-inner">
-    <div class="founder-photo">
-      <img src="founder.jpg" alt="Tyler — Dermatology PA-C, the face behind sighlurskin" class="founder-photo-img" />
-      <span class="founder-photo-badge">Dermatology PA-C</span>
-    </div>
-    <div class="founder-copy">
-      <span class="eyebrow eyebrow-light">MEET YOUR PA · @sighlurskin</span>
-      <h2 class="display">Hi — I'm the<br/>face behind <span class="word-bone-inline">sighlur</span><span class="word-blue-inline">skin</span>.</h2>
-      <p>
-        I've spent seven years as a Dermatology PA, watching patients try product
-        after product that promised the world and delivered an irritated barrier.
-        So I started sharing what actually works — no hype, no gatekeeping.
-      </p>
-      <p>
-        That turned into the Sighlur Skin Steps, the pyramid breakdowns, and a
-        community of 500K+ across platforms. <a href="shop.html">And yes — I finally put my name on a product.</a>
-      </p>
-      <div class="founder-stats">
-        <div><strong>185K</strong><span>TikTok</span></div>
-        <div><strong>106K</strong><span>Instagram</span></div>
-        <div><strong>20.5K</strong><span>YouTube</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+<main class="stage">
+  <h1 class="display headline">
+    <span class="sr-only">For all your skincare needs.</span>
+    <span aria-hidden="true">
+      <span class="line">For all your</span>
+      <span class="line typed-line"><span class="typed" id="typed">acne</span><span class="caret"></span></span>
+      <span class="line">needs.</span>
+    </span>
+  </h1>
 
-<!-- As seen on -->
-<section class="press" id="press">
-  <div class="press-inner">
-    <span class="press-label">AS SEEN ON</span>
-    <div class="press-logos">
-      <span>TIKTOK</span>
-      <span class="press-dot">●</span>
-      <span>YOUTUBE</span>
-      <span class="press-dot">●</span>
-      <span>INSTAGRAM</span>
-      <span class="press-dot">●</span>
-      <span>WELL+GOOD</span>
-      <span class="press-dot">●</span>
-      <span>BYRDIE</span>
-      <span class="press-dot">●</span>
-      <span>ALLURE</span>
-    </div>
-  </div>
-</section>
+  <form class="signup" novalidate>
+    <label class="sr-only" for="email">Email address</label>
+    <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required />
+    <button type="submit" class="btn">Sign up</button>
+    <p class="signup-status" aria-live="polite"></p>
+  </form>
+</main>
 
-<!-- Channels / Follow -->
-<section class="channels" id="follow">
-  <a class="channel-card channel-tiktok" href="https://www.tiktok.com/@sighlurskin" target="_blank" rel="noopener" aria-label="Follow on TikTok">
-    <span class="ch-handle">TikTok · @sighlurskin</span>
-    <span class="ch-count">185K<span>followers</span></span>
-    <span class="btn btn-butter">Follow on TikTok →</span>
-  </a>
-  <a class="channel-card channel-instagram" href="https://www.instagram.com/sighlurskin/" target="_blank" rel="noopener" aria-label="Follow on Instagram">
-    <span class="ch-handle">Instagram · @sighlurskin</span>
-    <span class="ch-count">106K<span>followers</span></span>
-    <span class="btn btn-butter">Follow on Instagram →</span>
-  </a>
-  <a class="channel-card channel-youtube" href="https://www.youtube.com/@sighlurskin/videos" target="_blank" rel="noopener" aria-label="Subscribe on YouTube">
-    <span class="ch-handle">YouTube · @sighlurskin</span>
-    <span class="ch-count">20.5K<span>subscribers</span></span>
-    <span class="btn btn-primary">Subscribe →</span>
-  </a>
-</section>
-
-<!-- The Sighlur Skin Steps feature -->
-<section class="steps-feature">
-  <div class="steps-feature-inner">
-    <div class="steps-feature-art">
-      <img src="pyramid.png" alt="The Sighlur Skin Steps pyramid" />
-    </div>
-    <div>
-      <span class="eyebrow eyebrow-light">THE FRAMEWORK</span>
-      <h2 class="display">Five steps.<br/>That's the whole routine.</h2>
-      <ul class="steps-list">
-        <li><span class="n">1</span><span><span class="nm">Cleanse</span> &nbsp;<span class="gl">— start with a clean slate.</span></span></li>
-        <li><span class="n">2</span><span><span class="nm">Treat</span> &nbsp;<span class="gl">— target your concern with actives.</span></span></li>
-        <li><span class="n">3</span><span><span class="nm">Moisturize</span> &nbsp;<span class="gl">— hydrate and replenish the barrier.</span></span></li>
-        <li><span class="n">4</span><span><span class="nm">Occlude</span> &nbsp;<span class="gl">— seal everything in overnight.</span></span></li>
-        <li><span class="n">5</span><span><span class="nm">Protect</span> &nbsp;<span class="gl">— sunscreen, every single morning.</span></span></li>
-      </ul>
-      <a href="steps.html" class="btn btn-primary btn-lg">Explore the Sighlur Skin Steps →</a>
-    </div>
-  </div>
-</section>
-
-<!-- Watch / Featured videos -->
-<section class="watch-section" id="watch">
-  <div class="section-head">
-    <span class="eyebrow eyebrow-light">WATCH · THE PYRAMIDS</span>
-    <h2 class="display">One ranked pyramid per step.</h2>
-  </div>
-  <!-- Live pyramids link straight to YouTube; remaining steps flip to live as they publish. -->
-  <div class="video-grid">
-    <a class="video-card" href="https://www.youtube.com/watch?v=38sle8sxiCQ" target="_blank" rel="noopener">
-      <div class="video-thumb"><img src="thumbnails/01_cleanse.png" alt="The Cleanser Pyramid" /><span class="tag tag-live">▶ Live</span></div>
-      <div class="video-body"><h3>The Cleanser Pyramid</h3><p>Step 1 — what to wash with, ranked.</p><span class="watch-link">Watch on YouTube →</span></div>
-    </a>
-    <a class="video-card soon" href="#">
-      <div class="video-thumb"><img src="thumbnails/02_treat.png" alt="The Treatment Pyramid" /><span class="tag tag-soon">Coming soon</span></div>
-      <div class="video-body"><h3>The Treatment Pyramid</h3><p>Step 2 — actives that earn their place.</p><span class="watch-link">Coming soon</span></div>
-    </a>
-    <a class="video-card" href="https://www.youtube.com/watch?v=naCdY8swR5U" target="_blank" rel="noopener">
-      <div class="video-thumb"><img src="thumbnails/03_moisturize.png" alt="The Moisturizer Pyramid" /><span class="tag tag-live">▶ Live</span></div>
-      <div class="video-body"><h3>The Moisturizer Pyramid</h3><p>Step 3 — barrier-first hydration, ranked.</p><span class="watch-link">Watch on YouTube →</span></div>
-    </a>
-    <a class="video-card soon" href="#">
-      <div class="video-thumb"><img src="thumbnails/04_occlude.png" alt="The Occlusive Pyramid" /><span class="tag tag-soon">Coming soon</span></div>
-      <div class="video-body"><h3>The Occlusive Pyramid</h3><p>Step 4 — the step everyone skips.</p><span class="watch-link">Coming soon</span></div>
-    </a>
-    <a class="video-card" href="https://www.youtube.com/watch?v=ZrZIwdTcqGk" target="_blank" rel="noopener">
-      <div class="video-thumb"><img src="thumbnails/05_protect.png" alt="The Sunscreen Pyramid" /><span class="tag tag-live">▶ Live</span></div>
-      <div class="video-body"><h3>The Sunscreen Pyramid</h3><p>Step 5 — the one that does the most.</p><span class="watch-link">Watch on YouTube →</span></div>
-    </a>
-    <a class="video-card" href="https://www.youtube.com/@sighlurskin/videos" target="_blank" rel="noopener">
-      <div class="video-thumb"><img src="skinsteps/skin_steps_poster.png" alt="All the Sighlur Skin Steps pyramids on YouTube" /><span class="tag tag-live">▶ Channel</span></div>
-      <div class="video-body"><h3>All the pyramids on YouTube</h3><p>Every step, ranked — watch the full series.</p><span class="watch-link">Go to the channel →</span></div>
-    </a>
-  </div>
-</section>
-
-<!-- Recent posts -->
-<section class="grid-section" id="posts">
-  <div class="section-head">
-    <span class="eyebrow eyebrow-dark">@SIGHLURSKIN · LATEST</span>
-    <h2 class="display">Fresh from the feed.</h2>
-  </div>
-  <!-- Swap each tile for a real post/Reel embed or thumbnail link. -->
-  <div class="ig-grid">
-    <a class="ig-tile ig-tile-sky" href="#"><span class="mono">[ reel · skincare myths, busted ]</span></a>
-    <a class="ig-tile ig-tile-marine" href="#"><span class="mono">[ carousel · ingredient deep dive ]</span></a>
-    <a class="ig-tile ig-tile-butter" href="#"><span class="mono">[ tiktok · the 5 skin steps ]</span></a>
-    <a class="ig-tile ig-tile-powder" href="#"><span class="mono">[ reel · my actual morning routine ]</span></a>
-    <a class="ig-tile ig-tile-cobalt" href="#"><span class="mono">[ photo · clinic day ]</span></a>
-    <a class="ig-tile ig-tile-bone" href="#"><span class="mono">[ tiktok · is this worth it? ]</span></a>
-  </div>
-</section>
-
-<!-- Soft shop callout -->
-<section class="shop-callout">
-  <div class="shop-callout-card">
-    <div>
-      <h2>Looking for the wash?</h2>
-      <p>One bottle — the gentle daily cleanser behind Step 1. Launching July 2026.</p>
-    </div>
-    <a href="shop.html" class="btn btn-primary btn-lg">Shop the wash →</a>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-top">
-    <a href="index.html" class="lockup lockup-footer">
-      <span class="droplet droplet-footer">@</span>
-      <span class="wordmark"><span class="word-blue">sighlur</span><span class="word-bone">skin</span></span>
-    </a>
-    <div class="footer-cols">
-      <div>
-        <h4>Explore</h4>
-        <a href="steps.html">The Skin Steps</a>
-        <a href="#watch">Watch</a>
-        <a href="#posts">Latest posts</a>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <a href="shop.html">Face wash</a>
-        <a href="shop.html#preorder">Pre-order</a>
-      </div>
-      <div>
-        <h4>Brand</h4>
-        <a href="#about">About</a>
-        <a href="mailto:hello@sighlurskin.com">Contact</a>
-      </div>
-      <div>
-        <h4>Follow</h4>
-        <a href="https://www.tiktok.com/@sighlurskin" target="_blank" rel="noopener">TikTok</a>
-        <a href="https://www.instagram.com/sighlurskin/" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.youtube.com/@sighlurskin/videos" target="_blank" rel="noopener">YouTube</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="mono">© 2026 SIGHLURSKIN, LLC · THE SIGHLUR SKIN STEPS™</span>
-    <div class="footer-legal">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="#">Accessibility</a>
-    </div>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="script.js?v=8"></script>
 </body>
 </html>
