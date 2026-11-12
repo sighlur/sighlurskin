@@ -1,6 +1,6 @@
 // sighlurskin — single-screen landing
 // 1) Typewriter word in "For all your ___ needs."
-// 2) Email signup → Supabase `signups` table.
+// 2) Email signup → /api/subscribe (adds the contact in Resend).
 
 // ── Typewriter ──────────────────────────────────────────────
 // Order is hand-shuffled so similar words don't sit next to each other.
@@ -47,11 +47,7 @@ if (typedEl) {
 }
 
 // ── Email signup ────────────────────────────────────────────
-// The publishable key is safe in the browser; row-level security on the
-// table controls what it can do.
-const SUPABASE_URL = 'https://nbhzcxznbredybhgftdf.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_E-SX57dvqy6TndFNnkSM1w_DR2WqKln';
-const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+// The Resend API key lives only in the serverless function (api/subscribe.js).
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const form = document.querySelector('form.signup');
@@ -67,26 +63,35 @@ if (form) {
     e.preventDefault();
     const email = form.email.value.trim().toLowerCase();
     if (!EMAIL_RE.test(email)) return show("Hmm — that email doesn't look right.", true);
-    if (!sb) return show('Something went wrong — try again in a sec?', true);
 
     const label = button.textContent;
     button.disabled = true;
     button.textContent = 'Signing up…';
     show('');
 
-    const { error } = await sb.from('signups').insert({ email, source: 'landing' });
+    let result = null;
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, company: form.company.value }),
+      });
+      result = { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
+    } catch (err) {
+      console.error('Signup request failed:', err);
+    }
 
     button.disabled = false;
     button.textContent = label;
 
-    if (!error) {
-      show("You're on the list. Talk soon. ✿");
-      form.reset();
-    } else if (error.code === '23505') {
+    if (result && result.ok && result.data.status === 'already') {
       show("You're already on the list. ✿");
       form.reset();
+    } else if (result && result.ok) {
+      window.location.assign('/welcome');
+    } else if (result && result.status === 400) {
+      show("Hmm — that email doesn't look right.", true);
     } else {
-      console.error('Supabase insert error:', error);
       show('Something went wrong — try again in a sec?', true);
     }
   });

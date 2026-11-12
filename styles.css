@@ -70,7 +70,7 @@ body {
   padding: 0 0.14em;
 }
 /* Marker band across the lower half of the letters, with softly rounded corners. */
-.typed::before {
+.typed::before, .mark::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -79,6 +79,7 @@ body {
   background: var(--butter);
   border-radius: 0.1em;
 }
+.mark { position: relative; isolation: isolate; padding: 0 0.1em; white-space: nowrap; }
 .typed:empty { padding: 0; }
 .typed:empty::before { display: none; }
 .caret {
@@ -116,6 +117,14 @@ body {
 .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--cobalt) 60%, transparent); }
 .btn:disabled { opacity: .6; cursor: default; transform: none; }
 .signup-status { flex-basis: 100%; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
+/* Post-signup page (welcome.html) */
+a.lockup { text-decoration: none; }
+.lede { margin: 0; max-width: 36ch; font-size: 18px; color: var(--deep); }
+.back { font: 500 14px/1 var(--mono); color: var(--cobalt); text-decoration: none; }
+.back:hover { text-decoration: underline; }
+
+/* Honeypot field: off-screen so people never see or tab to it; bots fill it */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .signup-status.error { color: #B00020; }
 
 @media (max-width: 520px) {
