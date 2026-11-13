@@ -40,7 +40,7 @@ body {
   border-radius: 50% 50% 50% 14%;
 }
 .wordmark { font: 800 28px/1 var(--display); color: var(--cobalt); letter-spacing: -0.01em; }
-.wordmark span { opacity: .55; }
+.wordmark span { color: var(--azure); }  /* "skin" */
 
 /* Centre stage */
 .stage {
