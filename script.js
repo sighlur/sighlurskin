@@ -3,14 +3,12 @@
 // 2) Email signup → /api/subscribe (adds the contact in Resend).
 
 // ── Typewriter ──────────────────────────────────────────────
-// Order is hand-shuffled so similar words don't sit next to each other.
+// Words appear in this order, then loop back to the start.
 const WORDS = [
-  'acne', 'SPF', 'rosacea', 'morning routine', 'dark spot', 'retinol',
-  'sensitive skin', 'night routine', 'hyperpigmentation', 'vitamin C',
-  'eczema', 'cleanser', 'oily skin', 'skin barrier', 'fine line',
-  'niacinamide', 'melasma', 'lip care', 'dry skin', 'exfoliation',
-  'blackhead', 'moisturizer', 'redness', 'body care', 'dark circle',
-  'sun damage', 'scalp care', 'keratosis pilaris', 'dandruff', 'glow-up',
+  'acne', 'retinoid', 'azelaic acid', 'layering', 'skin barrier',
+  'breakout', 'moisturizer', 'adapalene', 'tretinoin', 'dark spot',
+  'sensitive skin', 'rosacea', 'SPF', 'vitamin C', 'hormonal acne',
+  'oily skin', 'dry skin', 'sulfur', 'body care', 'scalp care',
 ];
 
 const typedEl = document.getElementById('typed');
