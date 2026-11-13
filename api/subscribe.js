@@ -130,15 +130,16 @@ async function logToSupabase(email) {
 
 function welcomeText() {
   return [
-    "You're in.",
+    'Welcome to the newsletter!',
     '',
-    "Thanks for joining the sighlurskin list. We'll send skincare tips, routines, and",
-    'answers to the questions we hear most, from a Dermatology PA-C.',
+    "I'm so excited to start this new project! It came about because so many of you",
+    "asked for it, and I think it's a really fun idea. I'm looking forward to sharing",
+    'skincare tips and routines, and answering some of your most frequently asked questions.',
     '',
-    'Talk soon.',
+    'Speak soon,',
+    'Tyler',
     '',
-    '— sighlurskin',
-    '',
+    '--',
     'You got this because you signed up at sighlurskin.com.',
     "This inbox isn't monitored, so please don't reply to this email.",
     'General skincare education, not medical advice.',
@@ -155,17 +156,25 @@ function welcomeHtml() {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EFE8DB;">
 <tr><td align="center" style="padding:32px 16px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#FBF6EA;border-radius:20px;">
-    <tr><td style="padding:32px 32px 8px;font:800 26px/1 'Baloo 2',Arial Rounded MT Bold,Helvetica,Arial,sans-serif;color:#0F2FE6;letter-spacing:-0.5px;">
-      sighlur<span style="color:#0A1F5C;">skin</span>
+    <tr><td style="padding:32px 32px 8px;">
+      <img src="https://sighlurskin.com/email-wordmark.png" width="142" height="30" alt="sighlurskin" style="display:block;border:0;font:800 26px/1 Helvetica,Arial,sans-serif;color:#0F2FE6;">
     </td></tr>
     <tr><td style="padding:16px 32px 0;font:800 32px/1.1 'Baloo 2',Arial Rounded MT Bold,Helvetica,Arial,sans-serif;color:#101730;">
-      You're in. ✿
+      Welcome to the newsletter!
     </td></tr>
     <tr><td style="padding:16px 32px 0;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
-      Thanks for joining the sighlurskin list. We'll send skincare tips, routines, and answers to the questions we hear most, from a Dermatology PA-C.
+      I'm so excited to start this new project! It came about because so many of you asked for it, and I think it's a really fun idea. I'm looking forward to sharing skincare tips and routines, and answering some of your most frequently asked questions.
     </td></tr>
-    <tr><td style="padding:16px 32px 32px;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
-      Talk soon.
+    <tr><td style="padding:20px 32px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+        <td style="padding-right:14px;vertical-align:middle;">
+          <img src="https://sighlurskin.com/email-headshot.png" width="56" height="56" alt="" style="display:block;border:0;border-radius:50%;">
+        </td>
+        <td style="vertical-align:middle;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
+          Speak soon,<br>
+          Tyler
+        </td>
+      </tr></table>
     </td></tr>
   </table>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
