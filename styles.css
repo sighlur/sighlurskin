@@ -64,7 +64,11 @@ body {
   .line + .line::before { content: none; }
   .typed-line { font-size: min(1em, 9vw); min-height: 1.02em; white-space: nowrap; }
 }
+/* inline-block, not inline: iOS Safari never re-lays out an absolutely positioned
+   ::before inside a plain inline when only its text changes, so the band stuck at a
+   stale width (half-covered words while typing, a leftover band while deleting). */
 .typed {
+  display: inline-block;
   position: relative;
   isolation: isolate;
   padding: 0 0.14em;
@@ -79,6 +83,9 @@ body {
   background: var(--butter);
   border-radius: 0.1em;
 }
+/* Same band as .mark's 52%/23%, but measured from the box's centre: an inline-block is
+   line-height tall, while an inline is Baloo 2's 1.61em glyph box. Both share a centre. */
+.typed::before { top: calc(50% + 0.032em); bottom: calc(50% - 0.435em); }
 .mark { position: relative; isolation: isolate; padding: 0 0.1em; white-space: nowrap; }
 .typed:empty { padding: 0; }
 .typed:empty::before { display: none; }
