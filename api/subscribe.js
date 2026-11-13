@@ -5,10 +5,17 @@
 //   RESEND_API_KEY     Full-access Resend API key (secret, never in the browser)
 //   RESEND_SEGMENT_ID  ID of the Resend segment broadcasts are sent to
 //
-// Each signup is also logged to the Supabase `signups` table so it can be
-// browsed there. Resend stays the real list: unsubscribes only happen in Resend.
+// Signups must tick the form's consent box ("Count me in for skincare guides,
+// updates and early launch access. Unsubscribe anytime.").
+//
+// Each signup is also logged to the Supabase `signups` table (email, source,
+// consent, created_at) so it can be browsed there. consent is null on rows from
+// before the checkbox existed. Resend stays the real list: unsubscribes only
+// happen in Resend (the welcome email's Unsubscribe button goes through
+// api/unsubscribe.js).
 
 const RESEND = 'https://api.resend.com';
+const SITE = 'https://sighlurskin.com';
 // Publishable key: safe to ship, row-level security only lets it insert.
 const SUPABASE_URL = 'https://nbhzcxznbredybhgftdf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_E-SX57dvqy6TndFNnkSM1w_DR2WqKln';
@@ -47,7 +54,13 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_email' });
   }
 
-  const api = (method, path, payload) =>
+  // The page won't submit without the consent box ticked; this stops anything
+  // posting here directly from skipping it.
+  if (body.consent !== true) {
+    return res.status(400).json({ error: 'consent_required' });
+  }
+
+  const api =(method, path, payload) =>
     fetch(RESEND + path, {
       method,
       headers: {
@@ -86,13 +99,24 @@ module.exports = async function handler(req, res) {
     });
     if (!created.ok) throw new Error(`create ${created.status}: ${await created.text()}`);
 
+    // Unsubscribe links carry the contact's random Resend ID, not the email
+    // address. The page asks before unsubscribing; the List-Unsubscribe header
+    // lets mail apps show their own one-click Unsubscribe button.
+    const { id: contactId } = await created.json();
+    const unsubscribePage = `${SITE}/unsubscribe?id=${contactId}`;
+    const oneClick = `${SITE}/api/unsubscribe?id=${contactId}`;
+
     // The signup already succeeded; a failed welcome email shouldn't undo it.
     const welcome = await api('POST', '/emails', {
       from: FROM,
       to: [email],
       subject: "You're on the Sighlurskin List!",
-      html: welcomeHtml(),
-      text: welcomeText(),
+      html: welcomeHtml(unsubscribePage),
+      text: welcomeText(unsubscribePage),
+      headers: {
+        'List-Unsubscribe': `<${oneClick}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
     if (!welcome.ok) console.error('subscribe: welcome email failed', welcome.status, await welcome.text());
 
@@ -106,7 +130,8 @@ module.exports = async function handler(req, res) {
 
 // Copy the signup into Supabase. Never throws and gives up after 3s, so a
 // Supabase problem can't block or slow a signup. A 409 means the email is
-// already in the table, which is fine.
+// already in the table, which is fine (that row is left as it was). Only called
+// after the consent check, so consent is always true here.
 async function logToSupabase(email) {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/signups`, {
@@ -117,7 +142,7 @@ async function logToSupabase(email) {
         'Content-Type': 'application/json',
         Prefer: 'return=minimal',
       },
-      body: JSON.stringify({ email, source: 'landing' }),
+      body: JSON.stringify({ email, source: 'landing', consent: true }),
       signal: AbortSignal.timeout(3000),
     });
     if (!r.ok && r.status !== 409) {
@@ -128,7 +153,7 @@ async function logToSupabase(email) {
   }
 }
 
-function welcomeText() {
+function welcomeText(unsubscribeUrl) {
   return [
     'Thank you for joining!',
     '',
@@ -143,10 +168,11 @@ function welcomeText() {
     'You got this because you signed up at sighlurskin.com.',
     "This inbox isn't monitored, so please don't reply to this email.",
     'General skincare education, not medical advice.',
+    `Unsubscribe: ${unsubscribeUrl}`,
   ].join('\n');
 }
 
-function welcomeHtml() {
+function welcomeHtml(unsubscribeUrl) {
   return `<!doctype html>
 <html><head>
 <meta charset="utf-8">
@@ -159,10 +185,10 @@ function welcomeHtml() {
     <tr><td style="padding:32px 32px 8px;">
       <img src="https://sighlurskin.com/email-wordmark.png" width="142" height="30" alt="sighlurskin" style="display:block;border:0;font:800 26px/1 Helvetica,Arial,sans-serif;color:#0F2FE6;">
     </td></tr>
-    <tr><td style="padding:16px 32px 0;font:800 32px/1.1 'Baloo 2',Arial Rounded MT Bold,Helvetica,Arial,sans-serif;color:#101730;">
+    <tr><td style="padding:16px 32px 0;font:800 32px/1.1 'Baloo 2',Arial Rounded MT Bold,Helvetica,Arial,sans-serif;color:#272B30;">
       Thank you for joining!
     </td></tr>
-    <tr><td style="padding:16px 32px 0;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
+    <tr><td style="padding:16px 32px 0;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#272B30;">
       I'm so excited to start this new project! It came about because so many of you asked for it, and I think it's a really fun idea. I'm looking forward to sharing skincare tips and routines, and answering some of your most frequently asked questions.
     </td></tr>
     <tr><td style="padding:20px 32px 32px;">
@@ -170,7 +196,7 @@ function welcomeHtml() {
         <td style="padding-right:14px;vertical-align:middle;">
           <img src="https://sighlurskin.com/email-headshot.png" width="56" height="56" alt="" style="display:block;border:0;border-radius:50%;">
         </td>
-        <td style="vertical-align:middle;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
+        <td style="vertical-align:middle;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#272B30;">
           Speak soon,<br>
           Tyler
         </td>
@@ -182,6 +208,9 @@ function welcomeHtml() {
       You got this because you signed up at <a href="https://sighlurskin.com" style="color:#0A1F5C;">sighlurskin.com</a>.<br>
       This inbox isn't monitored, so please don't reply to this email.<br>
       General skincare education, not medical advice.
+    </td></tr>
+    <tr><td style="padding:0 32px 32px;opacity:.75;">
+      <a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 20px;border:1.5px solid #0A1F5C;border-radius:999px;font:600 13px/1 Helvetica,Arial,sans-serif;color:#0A1F5C;text-decoration:none;">Unsubscribe</a>
     </td></tr>
   </table>
 </td></tr>

@@ -1,8 +1,8 @@
 /* sighlurskin — single-screen landing. Tokens from BRAND_STYLE_GUIDE.md */
 :root {
   --sky: #B9D8F2; --azure: #6DA8E2; --cobalt: #0F2FE6; --deep: #0A1F5C;
-  --bone: #F4EEDF; --cream: #FBF6EA; --butter: #EED77E;
-  --ink: #101730; --bg: #EFE8DB;
+  --bone: #F4EEDF; --cream: #FBF6EA; --butter: #F0E27F;
+  --ink: #272B30; --bg: #EFE8DB;
   --display: 'Baloo 2', system-ui, sans-serif;
   --body: 'Plus Jakarta Sans', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -48,7 +48,7 @@ body {
 .headline {
   margin: 0;
   font-family: var(--display); font-weight: 800;
-  /* Sized so the longest version ("…hyperpigmentation needs.") fits on one line. */
+  /* Sized so the longest version ("…hormonal acne questions.") fits on one line. */
   font-size: clamp(24px, 3.6vw, 60px);
   line-height: 1.1; letter-spacing: -0.01em;
   color: var(--cobalt);
@@ -105,14 +105,47 @@ body {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
   width: min(100%, 520px);
 }
-.signup input {
+.signup input[type="email"] {
   flex: 1 1 240px; min-width: 0;
   font: 500 15px/1 var(--mono); color: var(--ink);
   background: var(--cream);
   border: 2px solid var(--cobalt); border-radius: 999px;
   padding: 16px 22px;
 }
-.signup input:focus { outline: 3px solid var(--azure); outline-offset: 2px; }
+.signup input[type="email"]:focus { outline: 3px solid var(--azure); outline-offset: 2px; }
+
+/* Consent checkbox. In the HTML it sits between the email box and the button so
+   phones show email → checkbox → button; on wider screens it drops below the
+   email + button row. */
+.consent {
+  flex-basis: 100%; order: 1;
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-top: 4px; padding: 0 8px;
+  text-align: left;
+  font: 500 13px/1.55 var(--mono); color: var(--deep);
+  cursor: pointer;
+}
+.consent input {
+  appearance: none; -webkit-appearance: none;
+  flex: none; width: 20px; height: 20px; margin: 0;
+  display: grid; place-content: center;
+  background: var(--cream);
+  border: 2px solid var(--cobalt); border-radius: 6px;
+  cursor: pointer;
+}
+.consent input::before {
+  content: '';
+  width: 11px; height: 11px;
+  background: var(--bone);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transition: transform .12s ease;
+}
+.consent input:checked { background: var(--cobalt); }
+.consent input:checked::before { transform: scale(1); }
+.consent input:focus-visible { outline: 3px solid var(--azure); outline-offset: 2px; }
+.consent.error input { border-color: #B00020; box-shadow: 0 0 0 3px color-mix(in srgb, #B00020 18%, transparent); }
+
 /* The cobalt pill is the button's ::before, so it can squeeze into a circle (loading)
    while the button's own box keeps its size and the input beside it never shifts.
    script.js sets --squeeze to (width - height) / 2 when the request starts. */
@@ -173,17 +206,13 @@ body {
 }
 .shake { animation: shake .42s cubic-bezier(.36, .07, .19, .97); }
 
-.signup-status { flex-basis: 100%; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
+.signup-status { flex-basis: 100%; order: 2; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
 .signup-status.pop { animation: rise .35s cubic-bezier(.34, 1.4, .64, 1) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 
-/* Success: droplets + bubbles burst from the button, then a cobalt circle floods the screen. */
+/* Success: a cobalt circle floods the screen from the button. */
 .fx-wipe { position: fixed; inset: 0; z-index: 40; background: var(--cobalt); pointer-events: none; }
-.fx-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; }
-.fx-p { position: absolute; left: 0; top: 0; display: block; will-change: transform, opacity; }
-.fx-p.dot { border-radius: 50%; background: var(--c); }
-.fx-p.ring { border-radius: 50%; border: 2px solid var(--c); }
-.fx-p.drop { border-radius: 50% 50% 50% 14%; background: var(--c); }
+
 /* Post-signup page (welcome.html) */
 a.lockup { text-decoration: none; }
 .lede { margin: 0; max-width: 44ch; font: 500 15px/1.7 var(--mono); color: var(--deep); }
@@ -220,9 +249,12 @@ a.lockup { text-decoration: none; }
   .wordmark { font-size: 22px; }
   .droplet { width: 34px; height: 34px; font-size: 19px; }
   .btn { flex: 1 1 100%; }
+  .consent, .signup-status { order: 0; }
+  .consent { margin: 2px 0 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .caret { animation: none; }
+  .consent input::before { transition: none; }
   /* No morph: the pill stays a pill and its label reads "Signing up…" (set in script.js). */
   .btn:not([data-state="idle"])::before { left: 0; right: 0; }
   .btn:not([data-state="idle"]) .btn-label { opacity: 1; transform: none; }

@@ -1,16 +1,14 @@
 // sighlurskin — single-screen landing
-// 1) Typewriter word in "For all your ___ needs."
+// 1) Typewriter word in "For all your ___ questions."
 // 2) Email signup → /api/subscribe (adds the contact in Resend).
 
 // ── Typewriter ──────────────────────────────────────────────
-// Order is hand-shuffled so similar words don't sit next to each other.
+// Words appear in this order, then loop back to the start.
 const WORDS = [
-  'acne', 'SPF', 'rosacea', 'morning routine', 'dark spot', 'retinol',
-  'sensitive skin', 'night routine', 'hyperpigmentation', 'vitamin C',
-  'eczema', 'cleanser', 'oily skin', 'skin barrier', 'fine line',
-  'niacinamide', 'melasma', 'lip care', 'dry skin', 'exfoliation',
-  'blackhead', 'moisturizer', 'redness', 'body care', 'dark circle',
-  'sun damage', 'scalp care', 'keratosis pilaris', 'dandruff', 'glow-up',
+  'acne', 'retinoid', 'azelaic acid', 'layering', 'skin barrier',
+  'breakout', 'moisturizer', 'adapalene', 'tretinoin', 'dark spot',
+  'sensitive skin', 'rosacea', 'SPF', 'vitamin C', 'hormonal acne',
+  'oily skin', 'dry skin', 'sulfur', 'body care', 'scalp care',
 ];
 
 const typedEl = document.getElementById('typed');
@@ -52,15 +50,27 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Button animation (states live in styles.css):
 //   idle → loading: the pill squeezes into a circle with a spinner
-//   loading → done: a check draws in, droplets burst out, cobalt floods the screen,
-//                   then /welcome lifts that cobalt panel away (html.arriving)
+//   loading → done: a check draws in, then a cobalt circle floods the screen from the
+//                   button, and /welcome lifts that cobalt panel away (html.arriving)
 //   loading → idle: back to a pill; errors give it a little shake
 const form = document.querySelector('form.signup');
 if (form) {
   const status = form.querySelector('.signup-status');
   const button = form.querySelector('button[type="submit"]');
   const label = button.querySelector('.btn-label');
+  const consent = form.querySelector('input[name="consent"]');
+  const consentRow = consent.closest('.consent');
+  const CONSENT_MSG = "Please check the box so I know it's okay to email you.";
+  const BAD_EMAIL_MSG = "Hmm... that email doesn't look right.";
   const MIN_LOADING_MS = 750; // long enough to see the morph, even when the API is quick
+
+  // Re-run a one-shot CSS animation class, and drop it once it has played.
+  const restart = (el, cls) => {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+    el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
+  };
 
   const show = (msg, isError = false) => {
     status.textContent = msg;
@@ -68,11 +78,10 @@ if (form) {
     restart(status, 'pop');
   };
 
-  // Re-run a one-shot CSS animation class.
-  const restart = (el, cls) => {
-    el.classList.remove(cls);
-    void el.offsetWidth;
-    el.classList.add(cls);
+  const flagConsent = (on) => {
+    consentRow.classList.toggle('error', on);
+    if (on) consent.setAttribute('aria-invalid', 'true');
+    else consent.removeAttribute('aria-invalid');
   };
 
   const setState = (state) => {
@@ -91,20 +100,33 @@ if (form) {
     else button.setAttribute('aria-label', text);
   };
 
+  // Ticking the box clears its error straight away.
+  consent.addEventListener('change', () => {
+    if (consent.checked && consentRow.classList.contains('error')) {
+      flagConsent(false);
+      show('');
+    }
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (button.dataset.state !== 'idle') return;
     const email = form.email.value.trim().toLowerCase();
     if (!EMAIL_RE.test(email)) {
       restart(form.email, 'shake');
-      return show("Hmm — that email doesn't look right.", true);
+      return show(BAD_EMAIL_MSG, true);
+    }
+    if (!consent.checked) {
+      flagConsent(true);
+      consent.focus();
+      return show(CONSENT_MSG, true);
     }
 
     setState('loading');
     show('');
 
     const [result] = await Promise.all([
-      subscribe(email, form.leave_blank.value),
+      subscribe(email, consent.checked, form.leave_blank.value),
       sleep(reduceMotion ? 0 : MIN_LOADING_MS),
     ]);
 
@@ -118,9 +140,12 @@ if (form) {
     if (result && result.ok) {
       show("You're already on the list. ✿");
       form.reset();
+    } else if (result && result.status === 400 && result.data.error === 'consent_required') {
+      flagConsent(true);
+      show(CONSENT_MSG, true);
     } else {
       show(result && result.status === 400
-        ? "Hmm — that email doesn't look right."
+        ? BAD_EMAIL_MSG
         : 'Something went wrong — try again in a sec?', true);
       if (!reduceMotion) setTimeout(() => restart(button, 'shake'), 280); // after it springs back to a pill
     }
@@ -130,71 +155,33 @@ if (form) {
     setState('done');
     if (reduceMotion) return;
     const r = button.getBoundingClientRect();
-    const x = r.left + r.width / 2, y = r.top + r.height / 2;
-    await sleep(260); // let the check start drawing
-    burst(x, y);
-    await sleep(240);
-    await flood(x, y, r.height / 2);
+    await sleep(450); // let the check draw in and the circle pop
+    await flood(r.left + r.width / 2, r.top + r.height / 2, r.height / 2);
     try { sessionStorage.setItem('ss-arrive', '1'); } catch (e) {}
   }
 
   // Back button from /welcome can restore this page from the bfcache mid-celebration.
   window.addEventListener('pageshow', (e) => {
     if (!e.persisted) return;
-    document.querySelectorAll('.fx-wipe, .fx-layer').forEach((el) => el.remove());
+    document.querySelectorAll('.fx-wipe').forEach((el) => el.remove());
     setState('idle');
     form.reset();
+    flagConsent(false);
     show('');
   });
 }
 
-async function subscribe(email, leaveBlank) {
+async function subscribe(email, consent, leaveBlank) {
   try {
     const res = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, leave_blank: leaveBlank }),
+      body: JSON.stringify({ email, consent, leave_blank: leaveBlank }),
     });
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   } catch (err) {
     console.error('Signup request failed:', err);
     return null;
-  }
-}
-
-// ── Celebration effects ─────────────────────────────────────
-// Cobalt/azure read on the cream page; butter/sky light up once the cobalt flood is behind them.
-const BURST_COLORS = ['var(--cobalt)', 'var(--butter)', 'var(--azure)', 'var(--sky)', 'var(--cobalt)', 'var(--butter)', 'var(--azure)'];
-const SHAPES = ['drop', 'dot', 'ring'];
-
-// Droplets, dots and bubbles fly out from (x, y), then drift down and fade.
-function burst(x, y) {
-  const layer = document.createElement('div');
-  layer.className = 'fx-layer';
-  document.body.append(layer);
-  const N = 22;
-  for (let i = 0; i < N; i++) {
-    const p = document.createElement('span');
-    const shape = SHAPES[i % SHAPES.length];
-    p.className = `fx-p ${shape}`;
-    p.style.setProperty('--c', BURST_COLORS[i % BURST_COLORS.length]);
-    const size = { drop: 10, dot: 7, ring: 13 }[shape] + Math.random() * 8;
-    p.style.width = p.style.height = `${size}px`;
-    layer.append(p);
-
-    const angle = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-    const dist = 64 + Math.random() * 80;
-    const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist;
-    // Droplets point their tip back at the button, like they were flung off it.
-    const spin = shape === 'drop' ? `rotate(${(angle * 180) / Math.PI + 45}deg)` : '';
-    const at = (tx, ty, s) => `translate(${x - size / 2 + tx}px, ${y - size / 2 + ty}px) ${spin} scale(${s})`;
-    p.animate([
-      // Pop out fast…
-      { transform: at(0, 0, 0.2), opacity: 1, easing: 'cubic-bezier(.15,.8,.3,1)' },
-      // …then drift down and fade, like a little gravity.
-      { transform: at(dx, dy, 1), opacity: 1, offset: 0.4, easing: 'cubic-bezier(.45,0,.7,.5)' },
-      { transform: at(dx * 1.08, dy * 1.08 + 44, 0.6), opacity: 0 },
-    ], { duration: 1100 + Math.random() * 300, fill: 'forwards' });
   }
 }
 
@@ -212,5 +199,3 @@ function flood(x, y, r0) {
   // Animations don't tick in a background tab; never let that hold up the redirect.
   return Promise.race([anim.finished, sleep(DURATION + 150)]);
 }
-
-
