@@ -4,8 +4,14 @@
 // Vercel environment variables (Project → Settings → Environment Variables):
 //   RESEND_API_KEY     Full-access Resend API key (secret, never in the browser)
 //   RESEND_SEGMENT_ID  ID of the Resend segment broadcasts are sent to
+//
+// Each signup is also logged to the Supabase `signups` table so it can be
+// browsed there. Resend stays the real list: unsubscribes only happen in Resend.
 
 const RESEND = 'https://api.resend.com';
+// Publishable key: safe to ship, row-level security only lets it insert.
+const SUPABASE_URL = 'https://nbhzcxznbredybhgftdf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_E-SX57dvqy6TndFNnkSM1w_DR2WqKln';
 // No inbox behind this address; the emails say so instead of setting a reply-to.
 const FROM = 'sighlurskin <hello@sighlurskin.com>';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,6 +71,7 @@ module.exports = async function handler(req, res) {
       }
       // Errors if they're already in the segment; that's fine to ignore.
       await api('POST', `${contactPath}/segments/${RESEND_SEGMENT_ID}`);
+      await logToSupabase(email);
       return res.status(200).json({ status: 'already' });
     }
 
@@ -89,12 +96,37 @@ module.exports = async function handler(req, res) {
     });
     if (!welcome.ok) console.error('subscribe: welcome email failed', welcome.status, await welcome.text());
 
+    await logToSupabase(email);
     return res.status(200).json({ status: 'subscribed' });
   } catch (err) {
     console.error('subscribe:', err.message);
     return res.status(502).json({ error: 'upstream_error' });
   }
 };
+
+// Copy the signup into Supabase. Never throws and gives up after 3s, so a
+// Supabase problem can't block or slow a signup. A 409 means the email is
+// already in the table, which is fine.
+async function logToSupabase(email) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/signups`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ email, source: 'landing' }),
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!r.ok && r.status !== 409) {
+      console.error('subscribe: supabase log failed', r.status, await r.text());
+    }
+  } catch (err) {
+    console.error('subscribe: supabase log failed', err.message);
+  }
+}
 
 function welcomeText() {
   return [
