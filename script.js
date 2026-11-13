@@ -74,7 +74,7 @@ if (form) {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, company: form.company.value }),
+        body: JSON.stringify({ email, leave_blank: form.leave_blank.value }),
       });
       result = { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
     } catch (err) {

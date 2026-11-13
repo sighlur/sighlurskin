@@ -28,8 +28,13 @@ module.exports = async function handler(req, res) {
   }
 
   // Honeypot: a hidden field people never see. Bots that fill it get a
-  // normal-looking success so they don't retry.
-  if (body.company) return res.status(200).json({ status: 'subscribed' });
+  // normal-looking success so they don't retry. It must not be a field browser
+  // autofill recognises: it used to be "company", which autofill filled in for
+  // real visitors, so their signups were silently dropped.
+  if (body.leave_blank) {
+    console.warn('subscribe: honeypot filled, signup dropped');
+    return res.status(200).json({ status: 'subscribed' });
+  }
 
   const email = String(body.email || '').trim().toLowerCase();
   if (!EMAIL_RE.test(email) || email.length > 254) {
