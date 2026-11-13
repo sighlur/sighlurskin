@@ -146,7 +146,7 @@ if (form) {
     } else {
       show(result && result.status === 400
         ? BAD_EMAIL_MSG
-        : 'Something went wrong — try again in a sec?', true);
+        : 'Something went wrong... try again in a sec?', true);
       if (!reduceMotion) setTimeout(() => restart(button, 'shake'), 280); // after it springs back to a pill
     }
   });
