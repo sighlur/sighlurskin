@@ -13,6 +13,10 @@
 // before the checkbox existed. Resend stays the real list: unsubscribes only
 // happen in Resend (the welcome email's Unsubscribe button goes through
 // api/unsubscribe.js).
+//
+// Responses: {status: "subscribed"} for a new contact, "resubscribed" for one
+// who had unsubscribed and signed up again (both get the welcome email and go
+// to /welcome), "already" for someone still subscribed (no email sent).
 
 const RESEND = 'https://api.resend.com';
 const SITE = 'https://sighlurskin.com';
@@ -73,36 +77,43 @@ module.exports = async function handler(req, res) {
 
   try {
     const existing = await api('GET', contactPath);
+    let contactId;
+    let status = 'subscribed';
 
     if (existing.ok) {
-      // Already a contact. If they unsubscribed before, signing up again is a
-      // fresh opt-in, so turn them back on. Make sure they're in the segment.
       const contact = await existing.json();
-      if (contact.unsubscribed) {
-        const r = await api('PATCH', contactPath, { unsubscribed: false });
-        if (!r.ok) throw new Error(`resubscribe ${r.status}: ${await r.text()}`);
-      }
-      // Errors if they're already in the segment; that's fine to ignore.
+      // Make sure they're in the segment. Errors if they already are; that's
+      // fine to ignore.
       await api('POST', `${contactPath}/segments/${RESEND_SEGMENT_ID}`);
-      await logToSupabase(email);
-      return res.status(200).json({ status: 'already' });
-    }
 
-    if (existing.status !== 404) {
+      if (!contact.unsubscribed) {
+        // Still subscribed: nothing to do, and no second welcome email.
+        await logToSupabase(email);
+        return res.status(200).json({ status: 'already' });
+      }
+
+      // They unsubscribed before. Signing up again is a fresh opt-in, so turn
+      // them back on and treat it like a new signup: welcome email (with a new
+      // unsubscribe link) and the /welcome page.
+      const r = await api('PATCH', contactPath, { unsubscribed: false });
+      if (!r.ok) throw new Error(`resubscribe ${r.status}: ${await r.text()}`);
+      contactId = contact.id;
+      status = 'resubscribed';
+    } else if (existing.status === 404) {
+      const created = await api('POST', '/contacts', {
+        email,
+        unsubscribed: false,
+        segments: [{ id: RESEND_SEGMENT_ID }],
+      });
+      if (!created.ok) throw new Error(`create ${created.status}: ${await created.text()}`);
+      ({ id: contactId } = await created.json());
+    } else {
       throw new Error(`lookup ${existing.status}: ${await existing.text()}`);
     }
-
-    const created = await api('POST', '/contacts', {
-      email,
-      unsubscribed: false,
-      segments: [{ id: RESEND_SEGMENT_ID }],
-    });
-    if (!created.ok) throw new Error(`create ${created.status}: ${await created.text()}`);
 
     // Unsubscribe links carry the contact's random Resend ID, not the email
     // address. The page asks before unsubscribing; the List-Unsubscribe header
     // lets mail apps show their own one-click Unsubscribe button.
-    const { id: contactId } = await created.json();
     const unsubscribePage = `${SITE}/unsubscribe?id=${contactId}`;
     const oneClick = `${SITE}/api/unsubscribe?id=${contactId}`;
 
@@ -121,7 +132,7 @@ module.exports = async function handler(req, res) {
     if (!welcome.ok) console.error('subscribe: welcome email failed', welcome.status, await welcome.text());
 
     await logToSupabase(email);
-    return res.status(200).json({ status: 'subscribed' });
+    return res.status(200).json({ status });
   } catch (err) {
     console.error('subscribe:', err.message);
     return res.status(502).json({ error: 'upstream_error' });

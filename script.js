@@ -139,7 +139,7 @@ if (form) {
 
     setState('idle');
     if (result && result.ok) {
-      show("You're already on the list. ✿");
+      show("Good News! You're already on the list!");
       form.reset();
     } else if (result && result.status === 400 && result.data.error === 'consent_required') {
       flagConsent(true);
