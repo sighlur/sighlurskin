@@ -211,7 +211,7 @@ body {
 }
 .shake { animation: shake .42s cubic-bezier(.36, .07, .19, .97); }
 
-.signup-status { flex-basis: 100%; order: 2; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
+.signup-status { flex-basis: 100%; order: 2; margin: 14px 0 0; min-height: 1.5em; font: 500 15px/1.5 var(--mono); color: var(--deep); }
 .signup-status.pop { animation: rise .35s cubic-bezier(.34, 1.4, .64, 1) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 
