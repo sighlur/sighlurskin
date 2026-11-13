@@ -1,8 +1,8 @@
 /* sighlurskin — single-screen landing. Tokens from BRAND_STYLE_GUIDE.md */
 :root {
   --sky: #B9D8F2; --azure: #6DA8E2; --cobalt: #0F2FE6; --deep: #0A1F5C;
-  --bone: #F4EEDF; --cream: #FBF6EA; --butter: #EED77E;
-  --ink: #101730; --bg: #EFE8DB;
+  --bone: #F4EEDF; --cream: #FBF6EA; --butter: #F0E27F;
+  --ink: #272B30; --bg: #EFE8DB;
   --display: 'Baloo 2', system-ui, sans-serif;
   --body: 'Plus Jakarta Sans', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -105,14 +105,46 @@ body {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
   width: min(100%, 520px);
 }
-.signup input {
+.signup input[type="email"] {
   flex: 1 1 240px; min-width: 0;
   font: 500 15px/1 var(--mono); color: var(--ink);
   background: var(--cream);
   border: 2px solid var(--cobalt); border-radius: 999px;
   padding: 16px 22px;
 }
-.signup input:focus { outline: 3px solid var(--azure); outline-offset: 2px; }
+.signup input[type="email"]:focus { outline: 3px solid var(--azure); outline-offset: 2px; }
+
+/* Consent checkbox. In the HTML it sits between the email box and the button so
+   phones show email → checkbox → button; on wider screens it drops below the
+   email + button row. */
+.consent {
+  flex-basis: 100%; order: 1;
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-top: 4px; padding: 0 8px;
+  text-align: left;
+  font: 500 13px/1.55 var(--mono); color: var(--deep);
+  cursor: pointer;
+}
+.consent input {
+  appearance: none; -webkit-appearance: none;
+  flex: none; width: 20px; height: 20px; margin: 0;
+  display: grid; place-content: center;
+  background: var(--cream);
+  border: 2px solid var(--cobalt); border-radius: 6px;
+  cursor: pointer;
+}
+.consent input::before {
+  content: '';
+  width: 11px; height: 11px;
+  background: var(--bone);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transition: transform .12s ease;
+}
+.consent input:checked { background: var(--cobalt); }
+.consent input:checked::before { transform: scale(1); }
+.consent input:focus-visible { outline: 3px solid var(--azure); outline-offset: 2px; }
+.consent.error input { border-color: #B00020; box-shadow: 0 0 0 3px color-mix(in srgb, #B00020 18%, transparent); }
 .btn {
   font: 500 15px/1 var(--mono);
   background: var(--cobalt); color: var(--bone);
@@ -123,7 +155,7 @@ body {
 }
 .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--cobalt) 60%, transparent); }
 .btn:disabled { opacity: .6; cursor: default; transform: none; }
-.signup-status { flex-basis: 100%; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
+.signup-status { flex-basis: 100%; order: 2; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
 /* Post-signup page (welcome.html) */
 a.lockup { text-decoration: none; }
 .lede { margin: 0; max-width: 44ch; font: 500 15px/1.7 var(--mono); color: var(--deep); }
@@ -138,9 +170,12 @@ a.lockup { text-decoration: none; }
   .wordmark { font-size: 22px; }
   .droplet { width: 34px; height: 34px; font-size: 19px; }
   .btn { flex: 1 1 100%; }
+  .consent, .signup-status { order: 0; }
+  .consent { margin: 2px 0 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .caret { animation: none; }
+  .consent input::before { transition: none; }
 }
 
 

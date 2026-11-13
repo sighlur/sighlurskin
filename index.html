@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=27" />
+<link rel="stylesheet" href="styles.css?v=29" />
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -40,15 +40,19 @@
   <form class="signup" novalidate>
     <label class="sr-only" for="email">Email address</label>
     <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required />
+    <label class="consent">
+      <input type="checkbox" name="consent" required aria-describedby="signup-status" />
+      <span>Count me in for skincare guides, updates and early launch access. Unsubscribe anytime.</span>
+    </label>
     <button type="submit" class="btn">Sign up</button>
     <div class="hp" aria-hidden="true">
       <label for="hp-trap">Leave this blank</label>
       <input type="text" id="hp-trap" name="leave_blank" tabindex="-1" autocomplete="off" data-1p-ignore data-lpignore="true" data-bwignore />
     </div>
-    <p class="signup-status" aria-live="polite"></p>
+    <p class="signup-status" id="signup-status" aria-live="polite"></p>
   </form>
 </main>
 
-<script src="script.js?v=11"></script>
+<script src="script.js?v=12"></script>
 </body>
 </html>

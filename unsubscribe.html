@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unsubscribe · sighlurskin</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#0F2FE6" />
+<!-- Large cream-circle icon for Google Search; the small transparent one is the browser tab; apple-touch-icon is iMessage. -->
+<link rel="icon" type="image/png" sizes="192x192" href="search-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=3" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=29" />
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<header class="top">
+  <a class="lockup" href="/" aria-label="sighlurskin home">
+    <span class="wordmark">sighlur<span>skin</span></span>
+  </a>
+</header>
+
+<!-- Reached from the Unsubscribe button in an email: /unsubscribe?id=<Resend contact ID>.
+     It asks first instead of unsubscribing on page load, because mail security
+     scanners open every link in an email. -->
+<main class="stage">
+  <h1 class="display headline" id="title">Unsubscribe from <span class="mark">my emails</span>?</h1>
+  <p class="lede" id="message">You'll stop getting my newsletter. If you change your mind, you can sign up again on sighlurskin.com any time.</p>
+  <form id="unsubscribe" method="post" action="/api/unsubscribe">
+    <input type="hidden" name="id" id="contact-id" />
+    <button type="submit" class="btn">Unsubscribe</button>
+    <p class="signup-status" aria-live="polite"></p>
+  </form>
+  <a class="back" href="/">← Back to sighlurskin</a>
+</main>
+
+<script>
+(function () {
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var id = (new URLSearchParams(location.search).get('id') || '').trim();
+  var title = document.getElementById('title');
+  var message = document.getElementById('message');
+  var form = document.getElementById('unsubscribe');
+  var button = form.querySelector('button');
+  var status = form.querySelector('.signup-status');
+
+  function finish(heading, text) {
+    title.innerHTML = heading;
+    message.textContent = text;
+    form.hidden = true;
+  }
+  function badLink() {
+    finish('Hmm, that link <span class="mark">didn\'t work</span>.',
+      'Try the Unsubscribe button at the bottom of my most recent email.');
+  }
+
+  if (!UUID_RE.test(id)) return badLink();
+  document.getElementById('contact-id').value = id;
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    button.disabled = true;
+    button.textContent = 'Unsubscribing…';
+    status.textContent = '';
+    status.classList.remove('error');
+
+    var res = null;
+    try {
+      res = await fetch('/api/unsubscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id }),
+      });
+    } catch (err) {
+      console.error('Unsubscribe request failed:', err);
+    }
+
+    if (res && res.ok) {
+      finish('You\'re <span class="mark">unsubscribed</span>.',
+        'You won\'t get any more emails from me. Changed your mind? You can sign up again on sighlurskin.com any time.');
+    } else if (res && (res.status === 400 || res.status === 404)) {
+      badLink();
+    } else {
+      button.disabled = false;
+      button.textContent = 'Unsubscribe';
+      status.textContent = 'Something went wrong — try again in a sec?';
+      status.classList.add('error');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

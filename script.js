@@ -54,15 +54,36 @@ const form = document.querySelector('form.signup');
 if (form) {
   const status = form.querySelector('.signup-status');
   const button = form.querySelector('button[type="submit"]');
+  const consent = form.querySelector('input[name="consent"]');
+  const consentRow = consent.closest('.consent');
+  const CONSENT_MSG = "Please check the box so I know it's okay to email you.";
   const show = (msg, isError = false) => {
     status.textContent = msg;
     status.classList.toggle('error', isError);
   };
+  const flagConsent = (on) => {
+    consentRow.classList.toggle('error', on);
+    if (on) consent.setAttribute('aria-invalid', 'true');
+    else consent.removeAttribute('aria-invalid');
+  };
+
+  // Ticking the box clears its error straight away.
+  consent.addEventListener('change', () => {
+    if (consent.checked && consentRow.classList.contains('error')) {
+      flagConsent(false);
+      show('');
+    }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = form.email.value.trim().toLowerCase();
     if (!EMAIL_RE.test(email)) return show("Hmm — that email doesn't look right.", true);
+    if (!consent.checked) {
+      flagConsent(true);
+      consent.focus();
+      return show(CONSENT_MSG, true);
+    }
 
     const label = button.textContent;
     button.disabled = true;
@@ -74,7 +95,7 @@ if (form) {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, leave_blank: form.leave_blank.value }),
+        body: JSON.stringify({ email, consent: consent.checked, leave_blank: form.leave_blank.value }),
       });
       result = { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
     } catch (err) {
@@ -89,6 +110,9 @@ if (form) {
       form.reset();
     } else if (result && result.ok) {
       window.location.assign('/welcome');
+    } else if (result && result.status === 400 && result.data.error === 'consent_required') {
+      flagConsent(true);
+      show(CONSENT_MSG, true);
     } else if (result && result.status === 400) {
       show("Hmm — that email doesn't look right.", true);
     } else {
