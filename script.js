@@ -124,6 +124,7 @@ if (form) {
 
     setState('loading');
     show('');
+    prefetchWelcome();
 
     const [result] = await Promise.all([
       subscribe(email, consent.checked, form.leave_blank.value),
@@ -185,17 +186,27 @@ async function subscribe(email, consent, leaveBlank) {
   }
 }
 
-// A cobalt circle grows from the button until it covers the whole screen.
+// Fetch /welcome while the signup request runs, so the page swap under the blue is instant.
+function prefetchWelcome() {
+  if (document.querySelector('link[rel="prefetch"][href="/welcome"]')) return;
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
+  link.href = '/welcome';
+  document.head.append(link);
+}
+
+// A cobalt circle grows from the button until it covers the whole screen. It speeds up
+// rather than easing out at the end, so the screen is only fully blue right as we leave.
 function flood(x, y, r0) {
   const el = document.createElement('div');
   el.className = 'fx-wipe';
   document.body.append(el);
   const R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-  const DURATION = 700;
+  const DURATION = 520;
   const anim = el.animate([
     { clipPath: `circle(${r0}px at ${x}px ${y}px)` },
     { clipPath: `circle(${R}px at ${x}px ${y}px)` },
-  ], { duration: DURATION, easing: 'cubic-bezier(.7,0,.25,1)', fill: 'forwards' });
+  ], { duration: DURATION, easing: 'cubic-bezier(.55,0,.8,.45)', fill: 'forwards' });
   // Animations don't tick in a background tab; never let that hold up the redirect.
   return Promise.race([anim.finished, sleep(DURATION + 150)]);
 }

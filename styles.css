@@ -223,7 +223,7 @@ a.lockup { text-decoration: none; }
    Arriving from the signup button (html.arriving), it all waits for the cobalt panel to lift. */
 .welcome { --d0: .1s; }
 .arriving { background: var(--cobalt); }
-.arriving .welcome { --d0: .55s; }
+.arriving .welcome { --d0: .3s; }
 .arriving body::after {
   content: '';
   position: fixed; z-index: 60;
@@ -231,7 +231,8 @@ a.lockup { text-decoration: none; }
   background: var(--cobalt);
   border-radius: 0 0 56px 56px;
   pointer-events: none;
-  animation: lift .75s cubic-bezier(.7, 0, .25, 1) .12s both;
+  /* Starts moving straight away (no delay, quick start) so the full-blue moment stays short. */
+  animation: lift .6s cubic-bezier(.35, 0, .15, 1) both;
 }
 @keyframes lift { to { transform: translateY(-100%); } }
 .welcome .headline { animation: spring-up .7s cubic-bezier(.34, 1.56, .64, 1) var(--d0) both; }
