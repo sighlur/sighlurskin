@@ -113,22 +113,104 @@ body {
   padding: 16px 22px;
 }
 .signup input:focus { outline: 3px solid var(--azure); outline-offset: 2px; }
+/* The cobalt pill is the button's ::before, so it can squeeze into a circle (loading)
+   while the button's own box keeps its size and the input beside it never shifts.
+   script.js sets --squeeze to (width - height) / 2 when the request starts. */
 .btn {
+  position: relative; isolation: isolate;
   font: 500 15px/1 var(--mono);
-  background: var(--cobalt); color: var(--bone);
+  background: none; color: var(--bone);
   border: 0; border-radius: 999px;
   padding: 16px 30px;
   cursor: pointer;
   transition: transform .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn::before {
+  content: '';
+  position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background: var(--cobalt);
+  border-radius: 999px;
+  /* Springy overshoot: the circle squishes a touch narrower, then settles round. */
+  transition: left .5s cubic-bezier(.34, 1.45, .64, 1), right .5s cubic-bezier(.34, 1.45, .64, 1);
 }
 .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--cobalt) 60%, transparent); }
-.btn:disabled { opacity: .6; cursor: default; transform: none; }
+.btn:active { transform: scale(.96); transition-duration: .08s; }
+.btn:disabled { cursor: default; transform: none; box-shadow: none; }
+.btn:focus-visible { outline: 3px solid var(--azure); outline-offset: 2px; }
+
+.btn-label { display: inline-block; transition: opacity .18s ease, transform .18s ease; }
+.btn-icon {
+  position: absolute; left: 50%; top: 50%;
+  width: 24px; height: 24px; margin: -12px 0 0 -12px;
+  fill: none; stroke: var(--bone); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
+  pointer-events: none;
+}
+.btn-spin {
+  opacity: 0;
+  stroke-dasharray: 38 19;  /* ≈ two-thirds of the r=9 circumference */
+  transform-box: fill-box; transform-origin: center;
+  animation: spin .8s linear infinite;
+  transition: opacity .2s ease;
+}
+.btn-check { stroke-dasharray: 20; stroke-dashoffset: 20; }
+
+.btn:not([data-state="idle"])::before { left: var(--squeeze, 0px); right: var(--squeeze, 0px); }
+.btn:not([data-state="idle"]) .btn-label { opacity: 0; transform: translateY(-6px) scale(.9); }
+.btn[data-state="loading"] .btn-spin { opacity: 1; transition-delay: .22s; }
+.btn[data-state="done"] { animation: btn-pop .5s cubic-bezier(.34, 1.56, .64, 1); }
+.btn[data-state="done"] .btn-check { stroke-dashoffset: 0; transition: stroke-dashoffset .38s cubic-bezier(.65, 0, .35, 1) .06s; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes btn-pop { 0% { transform: scale(1); } 40% { transform: scale(1.16); } 100% { transform: scale(1); } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(3px); }
+}
+.shake { animation: shake .42s cubic-bezier(.36, .07, .19, .97); }
+
 .signup-status { flex-basis: 100%; margin: 2px 0 0; min-height: 1.5em; font-size: 15px; font-weight: 500; color: var(--deep); }
+.signup-status.pop { animation: rise .35s cubic-bezier(.34, 1.4, .64, 1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+
+/* Success: droplets + bubbles burst from the button, then a cobalt circle floods the screen. */
+.fx-wipe { position: fixed; inset: 0; z-index: 40; background: var(--cobalt); pointer-events: none; }
+.fx-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; }
+.fx-p { position: absolute; left: 0; top: 0; display: block; will-change: transform, opacity; }
+.fx-p.dot { border-radius: 50%; background: var(--c); }
+.fx-p.ring { border-radius: 50%; border: 2px solid var(--c); }
+.fx-p.drop { border-radius: 50% 50% 50% 14%; background: var(--c); }
 /* Post-signup page (welcome.html) */
 a.lockup { text-decoration: none; }
 .lede { margin: 0; max-width: 44ch; font: 500 15px/1.7 var(--mono); color: var(--deep); }
 .back { font: 500 14px/1 var(--mono); color: var(--cobalt); text-decoration: none; }
 .back:hover { text-decoration: underline; }
+
+/* Welcome entrance: headline springs up, then the butter band wipes in left → right.
+   Arriving from the signup button (html.arriving), it all waits for the cobalt panel to lift. */
+.welcome { --d0: .1s; }
+.arriving { background: var(--cobalt); }
+.arriving .welcome { --d0: .55s; }
+.arriving body::after {
+  content: '';
+  position: fixed; z-index: 60;
+  top: 0; left: 0; right: 0; bottom: -64px;  /* rounded corners start below the fold */
+  background: var(--cobalt);
+  border-radius: 0 0 56px 56px;
+  pointer-events: none;
+  animation: lift .75s cubic-bezier(.7, 0, .25, 1) .12s both;
+}
+@keyframes lift { to { transform: translateY(-100%); } }
+.welcome .headline { animation: spring-up .7s cubic-bezier(.34, 1.56, .64, 1) var(--d0) both; }
+.welcome .mark::before { animation: wipe .55s cubic-bezier(.65, 0, .35, 1) calc(var(--d0) + .45s) both; }
+.welcome .lede { animation: rise .5s ease-out calc(var(--d0) + .3s) both; }
+.welcome .back { animation: rise .5s ease-out calc(var(--d0) + .4s) both; }
+@keyframes spring-up { from { opacity: 0; transform: translateY(18px) scale(.96); } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0 round .1em); } to { clip-path: inset(0 0 0 0 round .1em); } }
 
 /* Honeypot field: off-screen so people never see or tab to it; bots fill it */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -141,6 +223,13 @@ a.lockup { text-decoration: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .caret { animation: none; }
+  /* No morph: the pill stays a pill and its label reads "Signing up…" (set in script.js). */
+  .btn:not([data-state="idle"])::before { left: 0; right: 0; }
+  .btn:not([data-state="idle"]) .btn-label { opacity: 1; transform: none; }
+  .btn-icon { display: none; }
+  .btn[data-state="done"], .shake, .signup-status.pop,
+  .welcome .headline, .welcome .mark::before, .welcome .lede, .welcome .back { animation: none; }
+  .arriving body::after { display: none; }
 }
 
 
