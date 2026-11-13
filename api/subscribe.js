@@ -130,7 +130,7 @@ async function logToSupabase(email) {
 
 function welcomeText() {
   return [
-    'Welcome to the newsletter!',
+    'Thank you for joining!',
     '',
     "I'm so excited to start this new project! It came about because so many of you",
     "asked for it, and I think it's a really fun idea. I'm looking forward to sharing",
@@ -160,7 +160,7 @@ function welcomeHtml() {
       <img src="https://sighlurskin.com/email-wordmark.png" width="142" height="30" alt="sighlurskin" style="display:block;border:0;font:800 26px/1 Helvetica,Arial,sans-serif;color:#0F2FE6;">
     </td></tr>
     <tr><td style="padding:16px 32px 0;font:800 32px/1.1 'Baloo 2',Arial Rounded MT Bold,Helvetica,Arial,sans-serif;color:#101730;">
-      Welcome to the newsletter!
+      Thank you for joining!
     </td></tr>
     <tr><td style="padding:16px 32px 0;font:400 17px/1.55 Helvetica,Arial,sans-serif;color:#101730;">
       I'm so excited to start this new project! It came about because so many of you asked for it, and I think it's a really fun idea. I'm looking forward to sharing skincare tips and routines, and answering some of your most frequently asked questions.
