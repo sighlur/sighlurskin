@@ -127,7 +127,7 @@ body {
   display: flex; align-items: flex-start; gap: 10px;
   margin-top: 4px; padding: 0 8px;
   text-align: left;
-  font: 500 13px/1.55 var(--mono); color: var(--deep);
+  font: 500 13px/1.55 var(--mono); color: var(--ink);
   cursor: pointer;
 }
 .consent input {
@@ -211,7 +211,7 @@ body {
 }
 .shake { animation: shake .42s cubic-bezier(.36, .07, .19, .97); }
 
-.signup-status { flex-basis: 100%; order: 2; margin: 14px 0 0; min-height: 1.5em; font: 500 15px/1.5 var(--mono); color: var(--deep); }
+.signup-status { flex-basis: 100%; order: 2; margin: 14px 0 0; min-height: 1.5em; font: 500 15px/1.5 var(--mono); color: var(--ink); }
 .signup-status.pop { animation: rise .35s cubic-bezier(.34, 1.4, .64, 1) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 
@@ -220,7 +220,7 @@ body {
 
 /* Post-signup page (welcome.html) */
 a.lockup { text-decoration: none; }
-.lede { margin: 0; max-width: 44ch; font: 500 15px/1.7 var(--mono); color: var(--deep); }
+.lede { margin: 0; max-width: 44ch; font: 500 15px/1.7 var(--mono); color: var(--ink); }
 .back { font: 500 14px/1 var(--mono); color: var(--cobalt); text-decoration: none; }
 .back:hover { text-decoration: underline; }
 
