@@ -1,5 +1,5 @@
 // sighlurskin — single-screen landing
-// 1) Typewriter word in "For all your ___ needs."
+// 1) Typewriter word in "For all your ___ questions."
 // 2) Email signup → /api/subscribe (adds the contact in Resend).
 
 // ── Typewriter ──────────────────────────────────────────────

@@ -48,7 +48,7 @@ body {
 .headline {
   margin: 0;
   font-family: var(--display); font-weight: 800;
-  /* Sized so the longest version ("…hyperpigmentation needs.") fits on one line. */
+  /* Sized so the longest version ("…hormonal acne questions.") fits on one line. */
   font-size: clamp(24px, 3.6vw, 60px);
   line-height: 1.1; letter-spacing: -0.01em;
   color: var(--cobalt);
