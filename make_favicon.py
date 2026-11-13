@@ -1,67 +1,64 @@
 #!/usr/bin/env python3
-"""Generate every sighlurskin site icon from two source logo PNGs.
+"""Generate every sighlurskin droplet icon, drawn fresh from the brand spec.
 
-The source is the cobalt droplet "@" mark on a transparent background
-(identity/logo/favicon-source.png, 512x512). Its built-in padding is trimmed
-so the mark fills the icon, which keeps it legible at 16px in a browser tab.
+The droplet and its "@" come from droplet.py (font: identity/fonts/Baloo2-Variable.ttf),
+so every size is rendered directly instead of shrunk from one big PNG.
 
-The Google Search icon comes from a second source: the same mark inside a
-bone circle (identity/logo/search-icon-source.png, 512x512).
+Round crops (anything that sits in a circle) use the bone circle and nudge the
+droplet up and right by 2.2% of its size, per BRAND_STYLE_GUIDE.md section 3.
 
-Usage: python3 make_favicon.py [path/to/source.png] [path/to/search-source.png]
+Usage: python3 make_favicon.py
 
 Outputs, at the repo root:
-  favicon.ico           16/32/48, the default /favicon.ico browsers and crawlers ask for
-  favicon-32.png        browser tab (the small rel="icon")
-  favicon.png           512, high-res transparent master (not linked from pages)
-  search-icon.png       192, bone circle, the large rel="icon" Google Search
-                        picks up. Keep this URL stable: Google asks that favicon
-                        URLs not change often.
-  apple-touch-icon.png  180, transparent, used for iMessage link previews (the
-                        droplet sits right on the message bubble). Trade-off:
-                        iOS fills transparency with black if someone saves the
-                        site to their home screen.
+  favicon-32.png        32, bone circle, droplet 56%: browser tab (the small rel="icon")
+  favicon.ico           16/32/48 of the same, the default /favicon.ico browsers and crawlers ask for
+  favicon.png           512 of the same, high-res master (not linked from pages)
+  search-icon.png       192 of the same, the large rel="icon" Google Search picks up.
+                        Keep this URL stable: Google asks that favicon URLs not change often.
+  apple-touch-icon.png  180, transparent droplet with a 4% margin, used for iMessage link
+                        previews (the droplet sits right on the message bubble). Trade-off:
+                        iOS fills transparency with black if someone saves the site to their
+                        home screen.
+
+And in identity/logo/:
+  droplet-mark.png      1000, transparent droplet, the master mark
+  favicon-source.png    512, the bone-circle favicon
+  instagram-avatar.png  1080, bone square, droplet 50%: Instagram profile picture
 """
 import os
-import sys
-from PIL import Image
+from droplet import render, BONE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "identity", "logo", "favicon-source.png")
-SEARCH_SOURCE = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "identity", "logo", "search-icon-source.png")
+LOGO = os.path.join(HERE, "identity", "logo")
+
+FAVICON_D = 0.56      # droplet size inside the bone circle
+INSTAGRAM_D = 0.50    # droplet size on the bone square
+TOUCH_MARGIN = 0.04   # apple-touch-icon padding on each side
 
 
-def trimmed(src, margin):
-    """Crop to the visible mark, then pad back to a square with `margin` (fraction of side)."""
-    box = src.getchannel("A").getbbox()
-    mark = src.crop(box)
-    side = max(mark.size)
-    canvas = int(round(side / (1 - 2 * margin)))
-    out = Image.new("RGBA", (canvas, canvas), (0, 0, 0, 0))
-    out.paste(mark, ((canvas - mark.width) // 2, (canvas - mark.height) // 2))
-    return out
+def favicon(size):
+    return render(size, size * FAVICON_D, background=BONE, circle=True, nudge=True)
 
 
-def save(img, name, size):
-    path = os.path.join(HERE, name)
-    img.resize((size, size), Image.LANCZOS).save(path, optimize=True)
-    print("wrote", name)
+def save(img, *path):
+    out = os.path.join(*path)
+    img.save(out, optimize=True)
+    print("wrote", os.path.relpath(out, HERE))
 
 
 def main():
-    src = Image.open(SOURCE).convert("RGBA")
-
-    icon = trimmed(src, 0.04)
-    save(icon, "favicon-32.png", 32)
-    save(icon, "favicon.png", 512)
-    icon.resize((256, 256), Image.LANCZOS).save(
-        os.path.join(HERE, "favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)]
-    )
+    save(favicon(32), HERE, "favicon-32.png")
+    save(favicon(512), HERE, "favicon.png")
+    save(favicon(192), HERE, "search-icon.png")
+    ico = favicon(48)
+    ico.save(os.path.join(HERE, "favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)],
+             append_images=[favicon(16), favicon(32)])
     print("wrote favicon.ico")
-    save(icon, "apple-touch-icon.png", 180)
+    save(render(180, 180 * (1 - 2 * TOUCH_MARGIN)), HERE, "apple-touch-icon.png")
 
-    # Google Search: the bone circle as drawn (already full-bleed, no trimming)
-    save(Image.open(SEARCH_SOURCE).convert("RGBA"), "search-icon.png", 192)
+    save(render(1000, 1000), LOGO, "droplet-mark.png")
+    save(favicon(512), LOGO, "favicon-source.png")
+    save(render(1080, 1080 * INSTAGRAM_D, background=BONE, nudge=True), LOGO, "instagram-avatar.png")
 
 
 if __name__ == "__main__":

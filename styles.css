@@ -3,6 +3,7 @@
   --sky: #B9D8F2; --azure: #6DA8E2; --cobalt: #0F2FE6; --deep: #0A1F5C;
   --bone: #F4EEDF; --cream: #FBF6EA; --butter: #F0E27F;
   --ink: #272B30; --bg: #EFE8DB;
+  --red: #B00020;  /* errors only: status messages and the consent box */
   --display: 'Baloo 2', system-ui, sans-serif;
   --body: 'Plus Jakarta Sans', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -27,11 +28,15 @@ body {
 /* Logo */
 .top { padding: 20px var(--gutter); }
 .lockup { display: inline-flex; align-items: center; gap: 10px; }
+/* Droplet: "@" at 64% of the side, centered, then raised by padding-bottom 0.74%
+   (it reads as centered because the drip corner and the @'s tail add weight at the bottom). */
 .droplet {
-  width: 40px; height: 40px;
-  display: grid; place-items: center;
+  --s: 40px;
+  width: var(--s); height: var(--s);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 0 calc(var(--s) * 0.0074);
   background: var(--cobalt); color: var(--bone);
-  font: 800 22px/1 var(--display);
+  font: 800 calc(var(--s) * 0.64)/1 var(--display);
   border-radius: 50% 50% 50% 14%;
 }
 .wordmark { font: 800 28px/1 var(--display); color: var(--cobalt); letter-spacing: -0.01em; }
@@ -144,7 +149,7 @@ body {
 .consent input:checked { background: var(--cobalt); }
 .consent input:checked::before { transform: scale(1); }
 .consent input:focus-visible { outline: 3px solid var(--azure); outline-offset: 2px; }
-.consent.error input { border-color: #B00020; box-shadow: 0 0 0 3px color-mix(in srgb, #B00020 18%, transparent); }
+.consent.error input { border-color: var(--red); box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 18%, transparent); }
 
 /* The cobalt pill is the button's ::before, so it can squeeze into a circle (loading)
    while the button's own box keeps its size and the input beside it never shifts.
@@ -244,11 +249,11 @@ a.lockup { text-decoration: none; }
 
 /* Honeypot field: off-screen so people never see or tab to it; bots fill it */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.signup-status.error { color: #B00020; }
+.signup-status.error { color: var(--red); }
 
 @media (max-width: 520px) {
   .wordmark { font-size: 22px; }
-  .droplet { width: 34px; height: 34px; font-size: 19px; }
+  .droplet { --s: 34px; }
   .btn { flex: 1 1 100%; }
   .consent, .signup-status { order: 0; }
   .consent { margin: 2px 0 4px; }
