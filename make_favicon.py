@@ -12,9 +12,10 @@ Outputs, at the repo root:
   favicon-32.png        browser tab
   favicon-192.png       Google search results and Android
   favicon.png           512, high-res icon
-  apple-touch-icon.png  180, on a solid bone background (iOS fills transparency
-                        with black), used for iPhone home screens and iMessage
-                        link previews
+  apple-touch-icon.png  180, transparent, used for iMessage link previews (the
+                        droplet sits right on the message bubble). Trade-off:
+                        iOS fills transparency with black if someone saves the
+                        site to their home screen.
 """
 import os
 import sys
@@ -22,7 +23,6 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "identity", "logo", "favicon-source.png")
-BONE = (244, 238, 223, 255)  # #F4EEDF
 
 
 def trimmed(src, margin):
@@ -53,12 +53,7 @@ def main():
         os.path.join(HERE, "favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)]
     )
     print("wrote favicon.ico")
-
-    # iOS: solid background, mark inset so the rounded-corner mask doesn't clip it
-    touch = Image.new("RGBA", (720, 720), BONE)
-    mark = trimmed(src, 0.0).resize((540, 540), Image.LANCZOS)
-    touch.alpha_composite(mark, (90, 90))
-    save(touch.convert("RGB"), "apple-touch-icon.png", 180)
+    save(icon, "apple-touch-icon.png", 180)
 
 
 if __name__ == "__main__":
