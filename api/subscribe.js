@@ -153,7 +153,7 @@ async function logToSupabase(email) {
         'Content-Type': 'application/json',
         Prefer: 'return=minimal',
       },
-      body: JSON.stringify({ email, source: 'landing', consent: true }),
+      body: JSON.stringify({ email, source: 'newsletter', consent: true }),
       signal: AbortSignal.timeout(3000),
     });
     if (!r.ok && r.status !== 409) {
